@@ -12,10 +12,9 @@ const Navigation = () => {
 
                     <div className="hidden md:flex items-center space-x-8 space-x-reverse">
                         <Link href="/blog" className="text-gray-300 hover:text-white transition-colors">بلاگ</Link>
-                        <Link href="/about" className="text-gray-300 hover:text-white transition-colors">درباره ما</Link>
-                        <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">تماس با ما</Link>
+                        <Link href="/About" className="text-gray-300 hover:text-white transition-colors">درباره ما</Link>
+                        <Link href="/Contact" className="text-gray-300 hover:text-white transition-colors">تماس با ما</Link>
                     </div>
-
                     <div className="flex items-center space-x-4 space-x-reverse">
                         <Link
                             href="/auth/login"

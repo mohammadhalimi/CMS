@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    /* مسیرها و خروجی‌ها */
+    "outDir": "./dist",
+    "rootDir": "./src",
+
+    /* استاندارد جاوااسکریپت خروجی */
+    "target": "ES2020",
+    "module": "CommonJS",
+
+    /* سازگاری */
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    /* چک‌های ایمنی */
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    /* قابلیت‌های جدید */
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

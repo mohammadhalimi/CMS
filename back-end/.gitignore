@@ -1,26 +1,54 @@
-# Dependencies
+# ========================
+# Node.js / Backend ignore
+# ========================
+
+# پوشه وابستگی‌ها
 node_modules/
 
-# Environment variables
+# خروجی build (در TypeScript یا Babel)
+dist/
+build/
+out/
+
+# فایل‌های محیطی (شامل اطلاعات حساس)
 .env
-.env.*.local
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
 
-# Logs
-*.log
+# لاگ‌ها و گزارش‌ها
 logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# OS files
+# کش‌ها
+.cache/
+.tmp/
+temp/
+coverage/
+
+# VSCode settings (اختیاری)
+.vscode/
+
+# سیستم‌عامل‌ها
 .DS_Store
 Thumbs.db
 
-# IDE
-.vscode/
-.idea/
+# TypeScript temporary files
+*.tsbuildinfo
 
-# Build outputs
-dist/
-build/
+# اگر از PM2 استفاده می‌کنی
+pids/
+*.pid
+*.seed
 
-# Package locks (یکی رو انتخاب کن)
-# package-lock.json
-# yarn.lock
+# تست‌ها
+coverage/
+jest-coverage/
+
+# Docker و موارد مشابه (اختیاری)
+docker-compose.override.yml
