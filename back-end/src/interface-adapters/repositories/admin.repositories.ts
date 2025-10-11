@@ -7,7 +7,10 @@ export const AdminRepository = {
     const admin = new AdminModel({ name, email, password: hashedPassword });
     return await admin.save();
   },
-
+  async getAll() {
+    const admins = await AdminModel.find().select("-password");
+    return admins;
+  },
   async findByEmail(email: string) {
     return await AdminModel.findOne({ email });
   },
