@@ -6,12 +6,21 @@ export function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/Admin') && 
       !request.nextUrl.pathname.startsWith('/Admin/login')) {
     
-    const token = request.cookies.get('adminToken')?.value || 
-                  localStorage.getItem('adminToken'); // از localStorage چک کن
+    const token = request.cookies.get('adminToken')?.value
 
     // اگر توکن وجود نداشت، به صفحه لاگین هدایت کن
     if (!token) {
       return NextResponse.redirect(new URL('/Admin/login', request.url));
+    }
+  }
+  if (request.nextUrl.pathname.startsWith('/auth') && 
+      !request.nextUrl.pathname.startsWith('/auth/login')) {
+    
+    const token = request.cookies.get('userToken')?.value
+
+    // اگر توکن وجود نداشت، به صفحه لاگین هدایت کن
+    if (!token) {
+      return NextResponse.redirect(new URL('/auth/login', request.url));
     }
   }
 
@@ -24,6 +33,7 @@ export const config = {
     '/admin/dashboard/:path*',
     '/admin/posts/:path*',
     '/admin/users/:path*',
-    '/admin/settings/:path*'
+    '/admin/settings/:path*',
+    '/auth/dashboard/:path*'
   ],
 };
