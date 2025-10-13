@@ -19,6 +19,7 @@ const menuItems = [
   { id: 'appearance', icon: '🎨', label: 'ظاهر' },
   { id: 'settings', icon: '⚙️', label: 'تنظیمات' },
   { id: 'admins', icon: '👨‍💼', label: 'لیست مدیران' },
+  {id: 'userList', icon: '👥', label: 'کاربران'}
 ];
 
 export default function AdminSidebar({ isOpen, onClose, activeSection, onSectionChange }: SidebarProps) {

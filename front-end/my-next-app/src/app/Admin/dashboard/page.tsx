@@ -15,6 +15,7 @@ import MenuSection from '@/components/MenuSection';
 import AppearanceSection from '@/components/AppearanceSection';
 import SettingsSection from '@/components/SettingsSection';
 import AdminSection from '@/components/AdminSection';
+import UsersList from '@/components/UserSection';
 
 interface AdminUser {
   name: string;
@@ -81,6 +82,8 @@ export default function AdminDashboard() {
         return <SettingsSection />;
         case 'admins':
         return <AdminSection />;
+      case 'userList':
+        return <UsersList />;
       default:
         return <DashboardSection />;
     }
