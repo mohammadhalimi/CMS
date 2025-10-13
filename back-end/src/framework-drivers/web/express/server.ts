@@ -21,4 +21,7 @@ app.get('/', (req, res) => {
 import adminRoutes from './routes/admin.routes';
 app.use('/admin', adminRoutes);
 
+import userRoutes from './routes/user.routes'
+app.use('/user', userRoutes);
+
 export default app;
