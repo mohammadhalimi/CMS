@@ -14,7 +14,6 @@ const menuItems = [
   { id: 'media', icon: '🖼️', label: 'مدیریت مدیا' },
   { id: 'categories', icon: '📂', label: 'دسته‌بندی‌ها' },
   { id: 'comments', icon: '💬', label: 'نظرات' },
-  { id: 'users', icon: '👥', label: 'کاربران' },
   { id: 'menu', icon: '🔗', label: 'منوها' },
   { id: 'appearance', icon: '🎨', label: 'ظاهر' },
   { id: 'settings', icon: '⚙️', label: 'تنظیمات' },

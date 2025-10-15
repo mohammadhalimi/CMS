@@ -60,7 +60,6 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4" dir="rtl">
       <div className="max-w-md w-full">
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,8 +69,6 @@ export default function AdminLogin() {
           <h1 className="text-3xl font-bold text-white">ورود به پنل مدیریت</h1>
           <p className="text-gray-400 mt-2">محتواپلاس</p>
         </div>
-
-        {/* Login Form */}
         <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-8">
           {error && (
             <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
@@ -142,8 +139,6 @@ export default function AdminLogin() {
               )}
             </button>
           </form>
-
-          {/* Demo Credentials */}
           <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
             <div className="flex items-start space-x-2 space-x-reverse text-yellow-400 text-sm">
               <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

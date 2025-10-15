@@ -10,7 +10,6 @@ import PostsSection from '@/components/PostsSection';
 import MediaSection from '@/components/MediaSection';
 import CategoriesSection from '@/components/CategoriesSection';
 import CommentsSection from '@/components/CommentsSection';
-import UsersSection from '@/components/UsersSection';
 import MenuSection from '@/components/MenuSection';
 import AppearanceSection from '@/components/AppearanceSection';
 import SettingsSection from '@/components/SettingsSection';
@@ -72,8 +71,6 @@ export default function AdminDashboard() {
         return <CategoriesSection />;
       case 'comments':
         return <CommentsSection />;
-      case 'users':
-        return <UsersSection />;
       case 'menu':
         return <MenuSection />;
       case 'appearance':
