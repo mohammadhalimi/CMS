@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 
 const app = express();
 
@@ -22,6 +23,21 @@ import adminRoutes from './routes/admin.routes';
 app.use('/admin', adminRoutes);
 
 import userRoutes from './routes/user.routes'
+
 app.use('/user', userRoutes);
+
+import postRoutes from './routes/post.routes';
+
+app.use('/posts', postRoutes);
+const uploadsPath = path.resolve(__dirname, '../../../uploads');
+
+app.use('/uploads', express.static(uploadsPath, {
+  setHeaders: (res) => {
+    // اجازه دسترسی از فرانت‌اند
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  },
+}));
 
 export default app;

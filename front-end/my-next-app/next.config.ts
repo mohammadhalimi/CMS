@@ -11,6 +11,11 @@ const nextConfig = {
         source: '/:path*',
         destination: 'http://localhost:4000/:path*', // بک‌اند شما
       },
+      // پروکسی برای تصاویر آپلود شده
+      {
+        source: '/uploads/:path*',
+        destination: 'http://localhost:4000/uploads/:path*',
+      },
     ];
   },
 
@@ -31,14 +36,10 @@ const nextConfig = {
 
   // برای اجازه دادن به تصاویر از دامنه‌های مختلف
   images: {
-    domains: ['localhost'],
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '4000',
-        pathname: '/**',
-      },
+        hostname: 'http://localhost:4000/uploads/posts',
+      }
     ],
   },
 }
