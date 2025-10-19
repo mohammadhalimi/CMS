@@ -15,5 +15,9 @@ router.post(
 
 // همه بتونن پست‌ها رو ببینن
 router.get('/all', PostController.getAll);
+// ✅ دریافت یک پست خاص با id
+router.get('/:id', PostController.getById);
 
+// ✅ دریافت پست‌های یک دسته‌بندی خاص
+router.get('/category/:category', PostController.getByCategory);
 export default router;

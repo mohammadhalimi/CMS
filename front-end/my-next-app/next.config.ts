@@ -3,13 +3,13 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-  
+
   // تنظیمات برای توسعه
   async rewrites() {
     return [
       {
-        source: '/:path*',
-        destination: 'http://localhost:4000/:path*', // بک‌اند شما
+        source: '/api/:path*',
+        destination: 'http://localhost:4000/api/:path*', // فقط API
       },
       // پروکسی برای تصاویر آپلود شده
       {

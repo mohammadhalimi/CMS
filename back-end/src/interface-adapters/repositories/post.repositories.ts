@@ -8,18 +8,46 @@ export const PostRepository = {
   },
 
   async findAll() {
-    return await PostModel.find().sort({ createdAt: -1 });
+    return await PostModel.find()
+      .populate({
+        path: 'authorId',
+        select: 'name email profileImage bio',
+      })
+      .sort({ createdAt: -1 })
+      .lean(); // خروجی سبک و JSON-ready
   },
 
   async findById(id: string) {
-    return await PostModel.findById(id);
+    return await PostModel.findById(id)
+      .populate({
+        path: 'authorId',
+        select: 'name email profileImage bio',
+      })
+      .lean();
   },
 
   async update(id: string, data: Partial<Post>) {
-    return await PostModel.findByIdAndUpdate(id, data, { new: true });
+    return await PostModel.findByIdAndUpdate(id, data, {
+      new: true,
+    })
+      .populate({
+        path: 'authorId',
+        select: 'name email profileImage bio',
+      })
+      .lean();
+  },
+
+  async findByCategory(category: string) {
+    return await PostModel.find({ category })
+      .populate({
+        path: 'authorId',
+        select: 'name email profileImage',
+      })
+      .sort({ createdAt: -1 })
+      .lean();
   },
 
   async delete(id: string) {
     return await PostModel.findByIdAndDelete(id);
-  }
+  },
 };

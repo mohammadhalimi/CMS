@@ -13,7 +13,7 @@ interface AddAdminModalProps {
 }
 
 export function AddAdminModal({ onClose, onAdminAdded, onMessage }: AddAdminModalProps) {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: ''});
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,6 +89,3 @@ export function AddAdminModal({ onClose, onAdminAdded, onMessage }: AddAdminModa
     </Modal>
   );
 }
-
-// EditProfileModal.tsx - به صورت مشابه پیاده‌سازی می‌شود
-// سایر کامپوننت‌های کمکی مانند Modal، FormInput، ModalActions و...

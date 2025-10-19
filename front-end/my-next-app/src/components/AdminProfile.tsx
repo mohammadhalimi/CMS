@@ -10,6 +10,7 @@ interface AdminProfileProps {
 }
 
 export function AdminProfile({ currentAdmin, onEditProfile, onAdminsUpdate }: AdminProfileProps) {
+  console.log(currentAdmin)
   return (
     <div className="bg-slate-800/50 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
       <div className="flex items-center justify-between mb-6">
@@ -49,13 +50,6 @@ export function AdminProfile({ currentAdmin, onEditProfile, onAdminsUpdate }: Ad
             label="نقش"
             value={currentAdmin.role}
             color="green"
-          />
-          
-          <AdminInfoCard
-            icon="calendar"
-            label="تاریخ عضویت"
-            value={formatDate(currentAdmin.createdAt)}
-            color="orange"
           />
         </div>
       </div>

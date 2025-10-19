@@ -3,15 +3,22 @@
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import Image from 'next/image';
-interface Post {
-  _id: string;
+export interface Post {
+  _id?: string;
   title: string;
   content: string;
-  status: 'draft' | 'published';
+  category?: string;
+  authorId: string;        // شناسه نویسنده
+  authorModel?: 'Admin' | 'user'; // اضافه شد
+  profileImage: String;
+  
+  tags?: string[];
   coverImage?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  status?: 'draft' | 'published';
 }
+
 
 export default function AdminPosts() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -29,7 +36,7 @@ export default function AdminPosts() {
   const fetchPosts = async () => {
     try {
       const token = Cookies.get('adminToken');
-      const res = await fetch('http://localhost:4000/posts/all', {
+      const res = await fetch('http://localhost:4000/api/posts/all', {
         headers: { Authorization: `Bearer ${token}`
       },
       });
@@ -89,7 +96,7 @@ export default function AdminPosts() {
         dataToSend.append('coverImage', formData.coverImage);
       }
 
-      const res = await fetch('http://localhost:4000/posts/create', {
+      const res = await fetch('http://localhost:4000/api/posts/create', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -189,7 +196,7 @@ export default function AdminPosts() {
                   </span>
                 </td>
                 <td className="py-4 px-6 text-gray-400">
-                  {new Date(post.createdAt).toLocaleDateString('fa-IR')}
+                  {new Date(post.createdAt || Date.now()).toLocaleDateString('fa-IR')}
                 </td>
               </tr>
             ))}

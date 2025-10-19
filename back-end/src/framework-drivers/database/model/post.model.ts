@@ -1,22 +1,38 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 import { Post } from '../../../entities/post.entity';
 
-export interface PostDocument extends Omit<Post, 'id'>, Document {}
+// 👇 نوع اصلاح‌شده
+export interface PostDocument extends Omit<Post, 'id' | 'authorId'>, Document {
+  authorId: Types.ObjectId; // ✅ نوع باید ObjectId باشه، نه string
+  authorModel: 'Admin' | 'user'; // مدل نویسنده (دینامیک)
+}
 
 const postSchema = new Schema<PostDocument>(
   {
     title: { type: String, required: true },
     content: { type: String, required: true },
-    authorId: { type: String, required: true },
+
+    // ✅ تعریف درست refPath با ObjectId
+    authorId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      refPath: 'authorModel',
+    },
+
+    authorModel: {
+      type: String,
+      required: true,
+      enum: ['Admin', 'user'],
+    },
+
     tags: { type: [String], default: [] },
+    category: { type: String },
     coverImage: { type: String },
     status: {
       type: String,
       enum: ['draft', 'published'],
       default: 'draft',
     },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
   },
   {
     timestamps: true,
@@ -24,4 +40,3 @@ const postSchema = new Schema<PostDocument>(
 );
 
 export const PostModel = model<PostDocument>('Post', postSchema);
-

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Cookies from 'js-cookie';
-import { Admin } from './types/admin';
+import { Admin } from '../types/admin';
 
 export const useAdmin = () => {
   const [admins, setAdmins] = useState<Admin[]>([]);

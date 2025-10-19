@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Admin } from './types/admin';
-import { useAdmin } from './useAdmin';
+import { useEffect } from 'react';
+import { useAdmin } from './hooks/useAdmin';
 import { AdminProfile } from './AdminProfile';
 import { AdminList } from './AdminList';
 import { AddAdminModal } from './AddAdminModal';

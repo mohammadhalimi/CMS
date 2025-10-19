@@ -9,7 +9,7 @@ export const AdminController = {
   // ثبت‌نام ادمین جدید
   async register(req: Request, res: Response) {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password, bio } = req.body;
       const admin = await registerAdmin(name, email, password);
       res.status(201).json({ message: 'Admin created successfully', admin });
     } catch (error: any) {

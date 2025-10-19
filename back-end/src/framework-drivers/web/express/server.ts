@@ -28,7 +28,7 @@ app.use('/user', userRoutes);
 
 import postRoutes from './routes/post.routes';
 
-app.use('/posts', postRoutes);
+app.use('/api/posts', postRoutes);
 const uploadsPath = path.resolve(__dirname, '../../../uploads');
 
 app.use('/uploads', express.static(uploadsPath, {
