@@ -44,6 +44,12 @@ export function AdminProfile({ currentAdmin, onEditProfile, onAdminsUpdate }: Ad
             value={currentAdmin.email}
             color="blue"
           />
+          <AdminInfoCard
+            icon="contact"
+            label="مشخصات"
+            value={currentAdmin.bio}
+            color="orange"
+          />
           
           <AdminInfoCard
             icon="shield"

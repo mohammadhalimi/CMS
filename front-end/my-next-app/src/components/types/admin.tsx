@@ -3,6 +3,7 @@ export interface Admin {
   name: string;
   email: string;
   role: string;
+  bio:string;
   profileImage?: string;
   createdAt: string;
 }

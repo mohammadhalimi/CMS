@@ -5,5 +5,6 @@ export interface Admin {
   password: string;
   profileImage?: string; 
   role?: 'admin';
+  bio?: string;
   createdAt?: Date;
 }

@@ -6,7 +6,7 @@ import { Calendar, User, Clock, Eye, ArrowRight, Tag, Edit3, Share2, Mail, Shiel
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function getPost(id: string) {
-  const res = await fetch(`${API_URL}/api/posts/${id}`, { 
+  const res = await fetch(`${API_URL}/api/posts/${id}`, {
     cache: "no-store",
     next: { tags: [`post-${id}`] }
   });
@@ -68,7 +68,7 @@ export default async function PostDetails({ params }: PostDetailsProps) {
   const getAuthorInitials = () => {
     const name = getAuthorName();
     if (name === 'نویسنده') return 'ن';
-    
+
     const words = name.split(' ');
     if (words.length === 1) {
       return words[0].charAt(0);
@@ -79,7 +79,7 @@ export default async function PostDetails({ params }: PostDetailsProps) {
 
   // تابع برای نمایش authorModel
   const getAuthorModelText = () => {
-    switch(post.authorModel) {
+    switch (post.authorModel) {
       case 'Admin':
         return 'مدیر';
       case 'User':
@@ -93,7 +93,7 @@ export default async function PostDetails({ params }: PostDetailsProps) {
 
   // تابع برای رنگ authorModel
   const getAuthorModelColor = () => {
-    switch(post.authorModel) {
+    switch (post.authorModel) {
       case 'Admin':
         return 'bg-red-500/20 text-red-300 border border-red-500/30';
       case 'User':
@@ -111,7 +111,7 @@ export default async function PostDetails({ params }: PostDetailsProps) {
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-8" dir="rtl">
       {/* دکمه بازگشت */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-        <Link 
+        <Link
           href="/posts"
           className="inline-flex items-center gap-2 text-slate-300 hover:text-white transition-colors duration-300 group"
         >
@@ -125,9 +125,8 @@ export default async function PostDetails({ params }: PostDetailsProps) {
         <header className="text-center mb-12">
           {/* وضعیت پست */}
           <div className="inline-flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 text-slate-300 px-6 py-3 rounded-2xl text-sm font-medium mb-8">
-            <div className={`w-3 h-3 rounded-full animate-pulse ${
-              post.status === 'published' ? 'bg-green-500' : 'bg-yellow-500'
-            }`}></div>
+            <div className={`w-3 h-3 rounded-full animate-pulse ${post.status === 'published' ? 'bg-green-500' : 'bg-yellow-500'
+              }`}></div>
             {post.status === 'published' ? 'منتشر شده' : 'پیش نویس'}
             <div className="w-px h-4 bg-slate-600"></div>
             <div className="flex items-center gap-1">
@@ -135,7 +134,7 @@ export default async function PostDetails({ params }: PostDetailsProps) {
               <span>۰ بازدید</span>
             </div>
           </div>
-          
+
           {/* عنوان */}
           <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-8 leading-tight">
             {post.title}
@@ -173,7 +172,7 @@ export default async function PostDetails({ params }: PostDetailsProps) {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm px-4 py-2 rounded-xl">
               <Calendar className="w-5 h-5 text-blue-400" />
               <div className="text-right">
@@ -181,7 +180,7 @@ export default async function PostDetails({ params }: PostDetailsProps) {
                 <div className="text-sm font-medium">{formatDate(post.createdAt)}</div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm px-4 py-2 rounded-xl">
               <Clock className="w-5 h-5 text-green-400" />
               <div className="text-right">
@@ -253,7 +252,7 @@ export default async function PostDetails({ params }: PostDetailsProps) {
             <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full"></div>
             اطلاعات فنی پست
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600/50 hover:border-blue-500/30 transition-all duration-300">
               <div className="flex items-center gap-3 mb-4">
@@ -264,7 +263,7 @@ export default async function PostDetails({ params }: PostDetailsProps) {
                 {formatDate(post.createdAt)}
               </div>
             </div>
-            
+
             <div className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600/50 hover:border-green-500/30 transition-all duration-300">
               <div className="flex items-center gap-3 mb-4">
                 <Calendar className="w-5 h-5 text-green-400" />
@@ -274,21 +273,20 @@ export default async function PostDetails({ params }: PostDetailsProps) {
                 {formatDate(post.updatedAt)}
               </div>
             </div>
-            
+
             <div className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600/50 hover:border-purple-500/30 transition-all duration-300">
               <div className="flex items-center gap-3 mb-4">
                 <Eye className="w-5 h-5 text-purple-400" />
                 <h4 className="text-white font-semibold">وضعیت انتشار</h4>
               </div>
-              <div className={`text-sm font-medium px-4 py-2 rounded-lg inline-block ${
-                post.status === 'published' 
-                  ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
+              <div className={`text-sm font-medium px-4 py-2 rounded-lg inline-block ${post.status === 'published'
+                  ? 'bg-green-500/20 text-green-300 border border-green-500/30'
                   : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
-              }`}>
+                }`}>
                 {post.status === 'published' ? 'منتشر شده' : 'پیش نویس'}
               </div>
             </div>
-            
+
             {/* اطلاعات نویسنده */}
             <div className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600/50 hover:border-orange-500/30 transition-all duration-300">
               <div className="flex items-center gap-3 mb-4">
@@ -318,7 +316,13 @@ export default async function PostDetails({ params }: PostDetailsProps) {
                     )}
                   </div>
                   <div className="flex-1">
-                    <div className="text-slate-300 text-sm font-medium">{getAuthorName()}</div>
+                    <div className="text-slate-300 text-sm font-medium"><Link
+                      href={`/Admin/${post.authorId._id || post.authorId}`}
+                      className="text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors duration-200"
+                    >
+                      {getAuthorName()}
+                    </Link>
+                    </div>
                     <div className="text-slate-400 text-xs flex items-center gap-1">
                       <Mail className="w-3 h-3" />
                       {getAuthorEmail()}

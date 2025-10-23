@@ -15,7 +15,8 @@ export const loginAdmin = async (email: string, password: string) => {
     name: admin.name,  
     email: admin.email, 
     role: admin.role,
-    profileImage: admin.profileImage 
+    profileImage: admin.profileImage,
+    bio: admin.bio
   };
 
  const options: jwt.SignOptions = {
@@ -30,7 +31,8 @@ export const loginAdmin = async (email: string, password: string) => {
       name: admin.name, 
       email: admin.email,
       role:admin.role,
-      profileImage: admin.profileImage 
+      profileImage: admin.profileImage,
+      bio: admin.bio
     } 
   };
 };

@@ -9,7 +9,7 @@ export const AdminController = {
   // ثبت‌نام ادمین جدید
   async register(req: Request, res: Response) {
     try {
-      const { name, email, password, bio } = req.body;
+      const { name, email, password } = req.body;
       const admin = await registerAdmin(name, email, password);
       res.status(201).json({ message: 'Admin created successfully', admin });
     } catch (error: any) {
@@ -59,7 +59,7 @@ export const AdminController = {
   async updateProfile(req: Request, res: Response) {
     try {
       const adminId = (req as any).admin.id; // از توکن گرفته میشه
-      const { name, email, password } = req.body;
+      const { name, email, password,bio } = req.body;
 
       const updates: any = {};
 
@@ -69,6 +69,7 @@ export const AdminController = {
         const hashedPassword = await bcrypt.hash(password, 10);
         updates.password = hashedPassword;
       }
+      if (bio) updates.bio = bio;
 
       const updatedAdmin = await AdminModel.findByIdAndUpdate(
         adminId,
@@ -84,4 +85,24 @@ export const AdminController = {
       res.status(400).json({ message: error.message });
     }
   },
+    // 🔍 دریافت اطلاعات یک ادمین بر اساس ID
+  async getById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const admin = await AdminModel.findById(id).select('-password');
+
+      if (!admin) {
+        return res.status(404).json({ message: 'ادمین یافت نشد' });
+      }
+
+      res.status(200).json({
+        message: 'اطلاعات ادمین با موفقیت دریافت شد ✅',
+        data: admin,
+      });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  },
+
 };

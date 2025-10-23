@@ -24,7 +24,8 @@ export function EditProfileModal({
   const [editFormData, setEditFormData] = useState({
     name: currentAdmin.name,
     email: currentAdmin.email,
-    password: ''
+    password: '',
+    bio:currentAdmin.bio
   });
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,6 +44,9 @@ export function EditProfileModal({
       }
       if (editFormData.password) {
         updateData.password = editFormData.password;
+      }
+       if (editFormData.bio !== currentAdmin.bio) {
+        updateData.bio = editFormData.bio;
       }
 
       if (Object.keys(updateData).length === 0) {
@@ -106,6 +110,14 @@ export function EditProfileModal({
           value={editFormData.email}
           onChange={handleInputChange}
           placeholder="ایمیل جدید را وارد کنید"
+        />
+        <FormInput
+          label="مشخصات"
+          type="text"
+          name="bio"
+          value={editFormData.bio}
+          onChange={handleInputChange}
+          placeholder="مشخصات جدید خود را وارد کنید ."
         />
 
         <FormInput

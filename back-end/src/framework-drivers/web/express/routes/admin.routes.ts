@@ -35,5 +35,6 @@ router.post('/login', AdminController.login);
 router.get('/all', verifyAdminToken, AdminController.getAll);
 router.get('/allUsers', verifyAdminToken, UserController.getAll);
 router.put('/update-profile',verifyAdminToken, AdminController.updateProfile);
+router.get('/:id', AdminController.getById);
 
 export default router;

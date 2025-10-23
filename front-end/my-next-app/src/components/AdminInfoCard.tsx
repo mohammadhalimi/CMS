@@ -1,7 +1,7 @@
-import { User, Mail, Shield } from 'lucide-react';
+import { User, Mail, Shield, Contact } from 'lucide-react';
 
 interface AdminInfoCardProps {
-  icon: 'user' | 'mail' | 'shield' | 'calendar';
+  icon: 'user' | 'mail' | 'shield' | 'contact';
   label: string;
   value: string;
   color: 'purple' | 'blue' | 'green' | 'orange';
@@ -11,7 +11,7 @@ const iconMap = {
   user: User,
   mail: Mail,
   shield: Shield,
-  calendar: CalendarIcon,
+  contact: Contact
 };
 
 const colorClasses = {
