@@ -2,9 +2,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, User, Clock, Eye, ArrowRight, Tag, Edit3, Share2, Mail, Shield } from "lucide-react";
+import CommentForm from "@/components/CommentForm";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// تابع برای دریافت پست
 async function getPost(id: string) {
   const res = await fetch(`${API_URL}/api/posts/${id}`, {
     cache: "no-store",
@@ -14,14 +16,34 @@ async function getPost(id: string) {
   return res.json();
 }
 
+// تابع برای دریافت نظرات
+async function getComments(postId: string) {
+  const res = await fetch(`${API_URL}/comments/post/${postId}`, {
+    cache: "no-store"
+  });
+  
+  if (!res.ok) {
+    return { data: [] };
+  }
+  
+  return res.json();
+}
+
 interface PostDetailsProps {
   params: Promise<{ id: string }>;
 }
 
 export default async function PostDetails({ params }: PostDetailsProps) {
   const { id } = await params;
-  const postData = await getPost(id);
+  
+  // دریافت اطلاعات پست و نظرات به صورت موازی
+  const [postData, commentsData] = await Promise.all([
+    getPost(id),
+    getComments(id)
+  ]);
+  
   const post = postData.data;
+  const comments = commentsData.data || [];
 
   // تابع برای فرمت کردن تاریخ
   const formatDate = (dateString: string) => {
@@ -105,6 +127,28 @@ export default async function PostDetails({ params }: PostDetailsProps) {
     }
   };
 
+  // تابع برای نمایش نقش نویسنده نظر
+  const getCommentAuthorRole = (authorModel: string) => {
+    switch(authorModel) {
+      case 'Admin':
+        return 'مدیر';
+      case 'User':
+        return 'کاربر';
+      case 'Editor':
+        return 'ویرایشگر';
+      default:
+        return authorModel || 'کاربر';
+    }
+  };
+
+  // تابع برای گرفتن آیدی نویسنده
+  const getAuthorId = () => {
+    if (post.authorId && typeof post.authorId === 'object' && post.authorId._id) {
+      return post.authorId._id;
+    }
+    return post.authorId;
+  };
+
   const readingTime = calculateReadingTime(post.content);
 
   return (
@@ -125,8 +169,9 @@ export default async function PostDetails({ params }: PostDetailsProps) {
         <header className="text-center mb-12">
           {/* وضعیت پست */}
           <div className="inline-flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 text-slate-300 px-6 py-3 rounded-2xl text-sm font-medium mb-8">
-            <div className={`w-3 h-3 rounded-full animate-pulse ${post.status === 'published' ? 'bg-green-500' : 'bg-yellow-500'
-              }`}></div>
+            <div className={`w-3 h-3 rounded-full animate-pulse ${
+              post.status === 'published' ? 'bg-green-500' : 'bg-yellow-500'
+            }`}></div>
             {post.status === 'published' ? 'منتشر شده' : 'پیش نویس'}
             <div className="w-px h-4 bg-slate-600"></div>
             <div className="flex items-center gap-1">
@@ -166,7 +211,12 @@ export default async function PostDetails({ params }: PostDetailsProps) {
               </div>
               <div className="text-right">
                 <div className="text-xs text-slate-400">نویسنده</div>
-                <div className="text-sm font-medium">{getAuthorName()}</div>
+                <Link 
+                  href={`/profile/${getAuthorId()}`}
+                  className="text-sm font-medium hover:text-purple-300 transition-colors duration-300 block"
+                >
+                  {getAuthorName()}
+                </Link>
                 <div className={`text-xs mt-1 px-2 py-1 rounded-full inline-block ${getAuthorModelColor()}`}>
                   {getAuthorModelText()}
                 </div>
@@ -279,10 +329,11 @@ export default async function PostDetails({ params }: PostDetailsProps) {
                 <Eye className="w-5 h-5 text-purple-400" />
                 <h4 className="text-white font-semibold">وضعیت انتشار</h4>
               </div>
-              <div className={`text-sm font-medium px-4 py-2 rounded-lg inline-block ${post.status === 'published'
+              <div className={`text-sm font-medium px-4 py-2 rounded-lg inline-block ${
+                post.status === 'published'
                   ? 'bg-green-500/20 text-green-300 border border-green-500/30'
                   : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
-                }`}>
+              }`}>
                 {post.status === 'published' ? 'منتشر شده' : 'پیش نویس'}
               </div>
             </div>
@@ -316,13 +367,12 @@ export default async function PostDetails({ params }: PostDetailsProps) {
                     )}
                   </div>
                   <div className="flex-1">
-                    <div className="text-slate-300 text-sm font-medium"><Link
-                      href={`/Admin/${post.authorId._id || post.authorId}`}
-                      className="text-sm font-medium text-purple-400 hover:text-purple-300 transition-colors duration-200"
+                    <Link
+                      href={`/profile/${getAuthorId()}`}
+                      className="text-slate-300 text-sm font-medium hover:text-purple-300 transition-colors duration-200 block"
                     >
                       {getAuthorName()}
                     </Link>
-                    </div>
                     <div className="text-slate-400 text-xs flex items-center gap-1">
                       <Mail className="w-3 h-3" />
                       {getAuthorEmail()}
@@ -342,6 +392,108 @@ export default async function PostDetails({ params }: PostDetailsProps) {
             </div>
           </div>
         </div>
+
+        {/* بخش ارسال نظر */}
+        <section className="mt-12">
+          <h3 className="text-xl font-bold text-white mb-4">💬 ثبت نظر جدید</h3>
+          <CommentForm postId={post._id} />
+        </section>
+
+        {/* بخش نمایش نظرات */}
+        <section className="bg-slate-800/50 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-8 mt-8">
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+            <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full"></div>
+            نظرات کاربران
+            <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">
+              {comments.length} نظر
+            </span>
+          </h3>
+          
+          {comments.length > 0 ? (
+            <div className="space-y-6">
+              {comments.map((comment: any) => (
+                <div 
+                  key={comment._id} 
+                  className="bg-slate-700/30 rounded-2xl p-6 border border-slate-600/50 hover:border-purple-500/30 transition-all duration-300"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      {/* عکس پروفایل کاربر */}
+                      <div className="relative">
+                        {comment.author?.profileImage ? (
+                          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500/30">
+                            <Image
+                              src={comment.author.profileImage}
+                              alt={comment.author.name}
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center border-2 border-purple-500/30">
+                            <span className="text-white text-xs font-bold">
+                              {comment.author?.name?.charAt(0) || "?"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="text-right">
+                        <Link 
+                          href={`/profile/${comment.authorId}`}
+                          className="text-white font-medium hover:text-purple-300 transition-colors duration-200 block"
+                        >
+                          {comment.author?.name || 'کاربر ناشناس'}
+                        </Link>
+                        <div className="text-slate-400 text-xs flex items-center gap-2 mt-1">
+                          <Calendar className="w-3 h-3" />
+                          {formatDate(comment.createdAt)}
+                          <div className={`text-xs px-2 py-1 rounded-full ${
+                            comment.status === 'approved' 
+                              ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                              : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
+                          }`}>
+                            {comment.status === 'approved' ? 'تایید شده' : 'در انتظار تایید'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-slate-300 text-sm leading-7 bg-slate-800/50 p-4 rounded-xl border border-slate-600/50">
+                    {comment.content}
+                  </p>
+                  
+                  {/* وضعیت نظر */}
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-600/50">
+                    <div className="flex items-center gap-4 text-xs text-slate-400">
+                      <span>نقش: {getCommentAuthorRole(comment.authorModel)}</span>
+                    </div>
+                    
+                    {/* دکمه‌های اکشن برای نظر */}
+                    <div className="flex items-center gap-2">
+                      <button className="text-slate-400 hover:text-purple-300 transition-colors duration-200 text-xs">
+                        پاسخ
+                      </button>
+                      <button className="text-slate-400 hover:text-red-300 transition-colors duration-200 text-xs">
+                        گزارش
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">💬</span>
+              </div>
+              <p className="text-slate-400 text-lg">هنوز نظری ثبت نشده است.</p>
+              <p className="text-slate-500 text-sm mt-2">اولین نفری باشید که نظر می‌دهد!</p>
+            </div>
+          )}
+        </section>
 
         {/* فوتر */}
         <footer className="text-center mt-12 pt-8 border-t border-slate-700/50">

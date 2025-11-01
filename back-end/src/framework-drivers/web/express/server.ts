@@ -40,4 +40,8 @@ app.use('/uploads', express.static(uploadsPath, {
   },
 }));
 
+import commentRoutes from './routes/comment.routes';
+
+app.use('/comments', commentRoutes);
+
 export default app;
