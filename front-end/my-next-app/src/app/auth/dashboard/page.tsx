@@ -3,121 +3,119 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
+import DashboardTab from '@/components/UserDashboard';
+import PostsTab from '@/components/UserPosts';
+import ProfileTab from '@/components/ProfileUser';
 
 interface User {
   id: string;
   name: string;
   email: string;
-  role: 'user' | 'author' | 'editor';
-  joinDate: string;
-  postsCount: number;
-  commentsCount: number;
+  role: string;
+  bio: string;
 }
 
 export default function UserDashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
   const router = useRouter();
 
-  // داده‌های نمونه
-  const sampleUser: User = {
-    id: '1',
-    name: 'علی محمدی',
-    email: 'ali@example.com',
-    role: 'author',
-    joinDate: '2024-01-15',
-    postsCount: 12,
-    commentsCount: 45
-  };
-
+  // دریافت اطلاعات کاربر از کوکی
   useEffect(() => {
-    setUser(sampleUser);
-  }, []);
+    const userDataFromCookie = Cookies.get('userData');
+    const userToken = Cookies.get('userToken');
+
+    if (!userToken) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (userDataFromCookie) {
+      try {
+        const userData = JSON.parse(userDataFromCookie);
+        setUser(userData);
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        router.push('/auth');
+      }
+    } else {
+      router.push('/auth/login');
+    }
+    
+    setLoading(false);
+  }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('userData');
-    router.push('/auth');
+    Cookies.remove('userToken');
+    Cookies.remove('userData');
+    router.push('/auth/login');
   };
 
-  const stats = [
-    { 
-      title: 'مقالات منتشر شده', 
-      value: '0', 
-      icon: '📝', 
-      color: 'from-blue-500 to-cyan-500' 
-    },
-    { 
-      title: 'نظرات ارسال شده', 
-      value:'0', 
-      icon: '💬', 
-      color: 'from-green-500 to-emerald-500' 
-    },
-    { 
-      title: 'بازدید مقالات', 
-      value: '۱,۲۵۰', 
-      icon: '👁️', 
-      color: 'from-purple-500 to-pink-500' 
-    },
-    { 
-      title: 'روزهای عضویت', 
-      value: '۴۵', 
-      icon: '📅', 
-      color: 'from-orange-500 to-yellow-500' 
-    },
-  ];
+  // دریافت حروف اول نام برای آواتار
+  const getUserInitials = () => {
+    if (!user?.name) return '?';
+    return user.name.split(' ').map(word => word.charAt(0)).join('').toUpperCase();
+  };
 
-  const recentPosts = [
-    { 
-      id: 1, 
-      title: 'آموزش کار با سیستم مدیریت محتوا', 
-      status: 'منتشر شده', 
-      date: '۱۴۰۲/۱۰/۱۵', 
-      views: 245,
-      comments: 12 
-    },
-    { 
-      id: 2, 
-      title: 'بهترین روش‌های سئو در سال ۲۰۲۴', 
-      status: 'در انتظار تایید', 
-      date: '۱۴۰۲/۱۰/۱۴', 
-      views: 0,
-      comments: 0 
-    },
-    { 
-      id: 3, 
-      title: 'بررسی جدیدترین قالب‌های وردپرس', 
-      status: 'منتشر شده', 
-      date: '۱۴۰۲/۱۰/۱۲', 
-      views: 189,
-      comments: 8 
-    },
-  ];
+  // ترجمه نقش کاربر
+  const getRoleText = (role: string) => {
+    switch(role) {
+      case 'admin': return 'مدیر';
+      case 'author': return 'نویسنده';
+      case 'editor': return 'ویرایشگر';
+      case 'user': return 'کاربر';
+      default: return role;
+    }
+  };
 
-  const recentComments = [
-    {
-      id: 1,
-      postTitle: 'آموزش کار با سیستم مدیریت محتوا',
-      content: 'مقاله بسیار عالی و کاربردی بود. ممنون از زحمات شما...',
-      date: '۲ ساعت پیش',
-      status: 'تایید شده'
-    },
-    {
-      id: 2,
-      postTitle: 'بررسی جدیدترین قالب‌های وردپرس',
-      content: 'من از قالب X استفاده کردم واقعا عالی بود...',
-      date: '۱ روز پیش',
-      status: 'در انتظار تایید'
-    },
-  ];
+  // رندر محتوای تب فعال
+  const renderActiveTab = () => {
+    if (!user) return null;
 
-  const quickActions = [
-    { title: 'مقاله جدید', icon: '📝', color: 'from-blue-500 to-cyan-500', href: '/user/posts/new' },
-    { title: 'ویرایش پروفایل', icon: '👤', color: 'from-green-500 to-emerald-500', href: '/user/profile' },
-    { title: 'مدیریت نظرات', icon: '💬', color: 'from-purple-500 to-pink-500', href: '/user/comments' },
-    { title: 'آمار و گزارشات', icon: '📊', color: 'from-orange-500 to-red-500', href: '/user/analytics' },
-  ];
+    switch(activeTab) {
+      case 'dashboard':
+        return <DashboardTab user={user} />;
+      case 'posts':
+        return <PostsTab />;
+      case 'new-post':
+        return <div className="text-center py-12">
+          <h2 className="text-2xl font-bold text-white mb-4">ایجاد مقاله جدید</h2>
+          <p className="text-slate-400">این بخش به زودی اضافه خواهد شد</p>
+        </div>;
+      case 'profile':
+        return <ProfileTab user={user} />;
+      default:
+        return <DashboardTab user={user} />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-white text-lg mb-4">خطا در بارگذاری اطلاعات کاربر</p>
+          <button 
+            onClick={() => router.push('/auth')}
+            className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg transition-all"
+          >
+            بازگشت به صفحه ورود
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" dir="rtl">
@@ -143,8 +141,7 @@ export default function UserDashboard() {
               <div>
                 <h1 className="text-xl font-bold text-white">پنل کاربری CMS</h1>
                 <p className="text-gray-400 text-sm">
-                  {user?.role === 'author' ? 'نویسنده' : 
-                   user?.role === 'editor' ? 'ویرایشگر' : 'کاربر'}
+                  {getRoleText(user.role)}
                 </p>
               </div>
             </div>
@@ -153,11 +150,11 @@ export default function UserDashboard() {
             <div className="flex items-center space-x-4 space-x-reverse">
               <div className="hidden sm:flex items-center space-x-3 space-x-reverse">
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold">
-                  {user?.name?.charAt(0)}
+                  {getUserInitials()}
                 </div>
                 <div className="text-right">
-                  <p className="text-white text-sm font-medium">{user?.name}</p>
-                  <p className="text-gray-400 text-xs">{user?.email}</p>
+                  <p className="text-white text-sm font-medium">{user.name}</p>
+                  <p className="text-gray-400 text-xs">{user.email}</p>
                 </div>
               </div>
               
@@ -186,12 +183,15 @@ export default function UserDashboard() {
           <div className="p-6 border-b border-white/10">
             <div className="flex items-center space-x-3 space-x-reverse">
               <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                {user?.name?.charAt(0)}
+                {getUserInitials()}
               </div>
               <div>
-                <h2 className="text-white font-bold">{user?.name}</h2>
+                <h2 className="text-white font-bold">{user.name}</h2>
                 <p className="text-gray-400 text-sm">
-                  {user?.role === 'author' ? 'نویسنده' : 'کاربر'}
+                  {user.email}
+                </p>
+                <p className="text-purple-400 text-xs mt-1">
+                  {getRoleText(user.role)}
                 </p>
               </div>
             </div>
@@ -202,10 +202,7 @@ export default function UserDashboard() {
               { id: 'dashboard', icon: '📊', label: 'داشبورد' },
               { id: 'posts', icon: '📝', label: 'مقالات من' },
               { id: 'new-post', icon: '✏️', label: 'مقاله جدید' },
-              { id: 'comments', icon: '💬', label: 'نظرات من' },
               { id: 'profile', icon: '👤', label: 'پروفایل' },
-              { id: 'media', icon: '🖼️', label: 'کتابخانه مدیا' },
-              { id: 'settings', icon: '⚙️', label: 'تنظیمات' },
             ].map((item) => (
               <button
                 key={item.id}
@@ -231,125 +228,7 @@ export default function UserDashboard() {
         {/* Main Content */}
         <div className="flex-1 lg:mr-64 transition-all duration-300">
           <div className="container mx-auto px-6 py-8">
-            
-            {/* آمار سریع */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {stats.map((stat, index) => (
-                <div key={index} className="bg-slate-800/50 backdrop-blur-lg rounded-xl border border-white/10 p-6 hover:transform hover:scale-105 transition-all duration-300">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-gray-400 text-sm mb-1">{stat.title}</p>
-                      <p className="text-2xl font-bold text-white">{stat.value}</p>
-                    </div>
-                    <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-lg flex items-center justify-center`}>
-                      <span className="text-xl">{stat.icon}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* مقالات اخیر */}
-              <div className="bg-slate-800/50 backdrop-blur-lg rounded-xl border border-white/10 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-bold text-white">مقالات اخیر</h3>
-                  <button className="text-purple-400 hover:text-purple-300 text-sm transition-all">
-                    مشاهده همه
-                  </button>
-                </div>
-                
-                <div className="space-y-4">
-                  {recentPosts.map((post) => (
-                    <div key={post.id} className="p-4 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-all">
-                      <div className="flex items-start justify-between mb-3">
-                        <h4 className="text-white font-medium text-sm flex-1">{post.title}</h4>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          post.status === 'منتشر شده' 
-                            ? 'bg-green-500/20 text-green-400' 
-                            : 'bg-yellow-500/20 text-yellow-400'
-                        }`}>
-                          {post.status}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-gray-400">
-                        <span>📅 {post.date}</span>
-                        <div className="flex items-center space-x-4 space-x-reverse">
-                          <span>👁️ {post.views}</span>
-                          <span>💬 {post.comments}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* نظرات اخیر */}
-              <div className="bg-slate-800/50 backdrop-blur-lg rounded-xl border border-white/10 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-bold text-white">نظرات اخیر</h3>
-                  <button className="text-purple-400 hover:text-purple-300 text-sm transition-all">
-                    مشاهده همه
-                  </button>
-                </div>
-                
-                <div className="space-y-4">
-                  {recentComments.map((comment) => (
-                    <div key={comment.id} className="p-4 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-all">
-                      <h4 className="text-white font-medium text-sm mb-2">{comment.postTitle}</h4>
-                      <p className="text-gray-300 text-xs mb-3 line-clamp-2">{comment.content}</p>
-                      <div className="flex items-center justify-between text-xs text-gray-400">
-                        <span>{comment.date}</span>
-                        <span className={`px-2 py-1 rounded-full ${
-                          comment.status === 'تایید شده' 
-                            ? 'bg-green-500/20 text-green-400' 
-                            : 'bg-yellow-500/20 text-yellow-400'
-                        }`}>
-                          {comment.status}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* اقدامات سریع */}
-            <div className="mt-8">
-              <h3 className="text-lg font-bold text-white mb-6">اقدامات سریع</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {quickActions.map((action, index) => (
-                  <button
-                    key={index}
-                    className="bg-slate-800/50 backdrop-blur-lg rounded-xl border border-white/10 p-6 hover:transform hover:scale-105 transition-all duration-300 group"
-                  >
-                    <div className={`w-16 h-16 bg-gradient-to-r ${action.color} rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all`}>
-                      <span className="text-2xl">{action.icon}</span>
-                    </div>
-                    <h4 className="text-white font-bold text-center">{action.title}</h4>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* وضعیت سیستم */}
-            <div className="mt-8 bg-slate-800/50 backdrop-blur-lg rounded-xl border border-white/10 p-6">
-              <h3 className="text-lg font-bold text-white mb-4">وضعیت سیستم</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                <div className="p-4 bg-green-500/20 rounded-lg border border-green-500/30">
-                  <div className="text-2xl mb-2">🟢</div>
-                  <p className="text-green-400 font-medium">سیستم فعال</p>
-                </div>
-                <div className="p-4 bg-blue-500/20 rounded-lg border border-blue-500/30">
-                  <div className="text-2xl mb-2">📊</div>
-                  <p className="text-blue-400 font-medium">پایگاه داده متصل</p>
-                </div>
-                <div className="p-4 bg-purple-500/20 rounded-lg border border-purple-500/30">
-                  <div className="text-2xl mb-2">🛡️</div>
-                  <p className="text-purple-400 font-medium">امنیت فعال</p>
-                </div>
-              </div>
-            </div>
+            {renderActiveTab()}
           </div>
         </div>
       </div>

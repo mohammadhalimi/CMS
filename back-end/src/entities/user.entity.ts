@@ -3,7 +3,8 @@ export interface User {
   name: string;
   email: string;
   password: string;
-  profileImage?: string; 
+  profileImage?: string;
+  bio?: string; 
   role?: 'user' | 'vip' | 'moderator';
   createdAt?: Date;
 }
