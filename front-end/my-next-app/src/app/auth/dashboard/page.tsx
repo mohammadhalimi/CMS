@@ -7,6 +7,7 @@ import Cookies from 'js-cookie';
 import DashboardTab from '@/components/UserDashboard';
 import PostsTab from '@/components/UserPosts';
 import ProfileTab from '@/components/ProfileUser';
+import Image from 'next/image';
 
 interface User {
   id: string;
@@ -14,6 +15,7 @@ interface User {
   email: string;
   role: string;
   bio: string;
+  profileImage: string;
 }
 
 export default function UserDashboard() {
@@ -21,7 +23,7 @@ export default function UserDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   const router = useRouter();
 
   // دریافت اطلاعات کاربر از کوکی
@@ -45,7 +47,7 @@ export default function UserDashboard() {
     } else {
       router.push('/auth/login');
     }
-    
+
     setLoading(false);
   }, [router]);
 
@@ -63,7 +65,7 @@ export default function UserDashboard() {
 
   // ترجمه نقش کاربر
   const getRoleText = (role: string) => {
-    switch(role) {
+    switch (role) {
       case 'admin': return 'مدیر';
       case 'author': return 'نویسنده';
       case 'editor': return 'ویرایشگر';
@@ -76,7 +78,7 @@ export default function UserDashboard() {
   const renderActiveTab = () => {
     if (!user) return null;
 
-    switch(activeTab) {
+    switch (activeTab) {
       case 'dashboard':
         return <DashboardTab user={user} />;
       case 'posts':
@@ -106,7 +108,7 @@ export default function UserDashboard() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
           <p className="text-white text-lg mb-4">خطا در بارگذاری اطلاعات کاربر</p>
-          <button 
+          <button
             onClick={() => router.push('/auth')}
             className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg transition-all"
           >
@@ -150,14 +152,20 @@ export default function UserDashboard() {
             <div className="flex items-center space-x-4 space-x-reverse">
               <div className="hidden sm:flex items-center space-x-3 space-x-reverse">
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-bold">
-                  {getUserInitials()}
+                  <Image
+                    src={user.profileImage}
+                    alt="Profile"
+                    width={128}
+                    height={128}
+                    className="w-full h-full object-cover rounded-full"
+                  />
                 </div>
                 <div className="text-right">
                   <p className="text-white text-sm font-medium">{user.name}</p>
                   <p className="text-gray-400 text-xs">{user.email}</p>
                 </div>
               </div>
-              
+
               <button
                 onClick={handleLogout}
                 className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-400 px-4 py-2 rounded-lg transition-all flex items-center space-x-2 space-x-reverse"
@@ -183,7 +191,13 @@ export default function UserDashboard() {
           <div className="p-6 border-b border-white/10">
             <div className="flex items-center space-x-3 space-x-reverse">
               <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                {getUserInitials()}
+                <Image
+                  src={user.profileImage}
+                  alt="Profile"
+                  width={128}
+                  height={128}
+                  className="w-full h-full object-cover rounded-full"
+                />
               </div>
               <div>
                 <h2 className="text-white font-bold">{user.name}</h2>
@@ -212,8 +226,8 @@ export default function UserDashboard() {
                 }}
                 className={`
                   w-full flex items-center space-x-3 space-x-reverse p-3 rounded-lg transition-all
-                  ${activeTab === item.id 
-                    ? 'bg-purple-500/20 text-purple-400 border-r-2 border-purple-500' 
+                  ${activeTab === item.id
+                    ? 'bg-purple-500/20 text-purple-400 border-r-2 border-purple-500'
                     : 'text-gray-300 hover:bg-white/5 hover:text-white'
                   }
                 `}
@@ -235,7 +249,7 @@ export default function UserDashboard() {
 
       {/* Mobile Overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />

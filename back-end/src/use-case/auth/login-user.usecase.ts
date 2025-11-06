@@ -10,25 +10,29 @@ export const loginUser = async (email: string, password: string) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error('Invalid password');
 
-  const payload = { 
+  const payload = {
     id: user._id,
-    name: user.name,  
-    email: user.email, 
-    role: user.role
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    bio: user.bio,
+    profileImage: user.profileImage
   };
 
- const options: jwt.SignOptions = {
-  expiresIn: env.jwtExpiresIn as jwt.SignOptions['expiresIn']
-};
+  const options: jwt.SignOptions = {
+    expiresIn: env.jwtExpiresIn as jwt.SignOptions['expiresIn']
+  };
   const token = jwt.sign(payload, env.jwtSecret, options);
 
-  return { 
-    token, 
-    user: { 
-      id: user._id, 
-      name: user.name, 
+  return {
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
       email: user.email,
-      role:user.role
-    } 
+      role: user.role,
+      bio: user.bio,
+      profileImage: user.profileImage
+    }
   };
 };

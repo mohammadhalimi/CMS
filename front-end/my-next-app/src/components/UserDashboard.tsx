@@ -5,6 +5,7 @@ interface DashboardTabProps {
     name: string;
     email: string;
     role: string;
+    bio: string;
   };
 }
 
@@ -95,6 +96,10 @@ export default function DashboardTab({ user }: DashboardTabProps) {
           <div className="bg-slate-700/30 rounded-lg p-4">
             <p className="text-gray-400 text-sm">آیدی کاربر</p>
             <p className="text-white font-medium text-sm">{user.id}</p>
+          </div>
+          <div className="bg-slate-700/30 rounded-lg p-4">
+            <p className="text-gray-400 text-sm">بیوگرافی کاربر</p>
+            <p className="text-white font-medium text-sm">{user.bio}</p>
           </div>
         </div>
       </div>

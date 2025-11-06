@@ -4,7 +4,6 @@ import { loginUser } from '../../../../use-case/auth/login-user.usecase';
 import { getAllUsers } from '../../../../use-case/auth/get-all-users.usecase';
 import { UserModel } from '../../../database/model/user.model';
 import bcrypt from 'bcryptjs';
-import { updateUserProfile } from '../../../../use-case/auth/update-user-profile.usecase';
 
 export const UserController = {
   async register(req: Request, res: Response) {
@@ -60,4 +59,20 @@ export const UserController = {
       res.status(400).json({ message: error.message });
     }
   },
+  // 📸 آپلود عکس پروفایل
+    async uploadProfileImage(req: Request, res: Response) {
+      try {
+        const userId = (req as any).user.id; // از توکن گرفته میشه
+        const filePath = `/uploads/users/${req.file?.filename}`;
+  
+        await UserModel.findByIdAndUpdate(userId, { profileImage: filePath });
+  
+        res.status(200).json({
+          message: 'عکس پروفایل با موفقیت آپلود شد',
+          profileImage: filePath,
+        });
+      } catch (error: any) {
+        res.status(400).json({ message: error.message });
+      }
+    },
 };
